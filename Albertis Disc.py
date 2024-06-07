@@ -40,7 +40,7 @@ def show_set_text(text):
         for a, b in enumerate(s_disc):
             if j == b:
                 lst_text.append((a, b))
-    print(lst_text)
+    
     
 
 def set_move_code(move):
