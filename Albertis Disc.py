@@ -23,7 +23,7 @@ lst_stat = []
 lst_text = []
 new_lst = []
 
-result = ""
+
 
 def set_stat_code(stat):
 
@@ -37,11 +37,10 @@ def set_stat_code(stat):
 def show_set_text(text):
     
     for i, j in enumerate(text):
-        lst_stat.append((i, j))
-    for x in lst_stat:
         for a, b in enumerate(s_disc):
-            if x[1] == b:
-                lst_text.append((a, x[1]))
+            if j == b:
+                lst_text.append((a, b))
+    print(lst_text)
     
 
 def set_move_code(move):
@@ -54,12 +53,13 @@ def set_move_code(move):
 
 
 def encrypt_code():
-    for i,j in enumerate(m_disc):
-        for y, z in enumerate(lst_text):
-            if i == z[0]:
-                new_lst.append((y, j))
+    result = ""
 
-    print(new_lst[0])
+    for x in lst_text:
+        for i, j in enumerate(m_disc):
+            if x[0] == i:
+                result += j
+    return result
                     
 
 if __name__ == "__main__":
@@ -77,4 +77,4 @@ if __name__ == "__main__":
 
     #show the text with code
     show_set_text(text)
-    encrypt_code()
+    print("The encrypted word is: ", encrypt_code())
