@@ -1,7 +1,7 @@
 #words number
 
-words_number = {
-    1: "One", 2: "Two", 3: "Three",
+numbers = {
+    0:"Zero", 1: "One", 2: "Two", 3: "Three",
     4: "Four", 5: "Five", 6: 'Six',
     7: "Seven", 8: "Eight", 9: "Nine",
     10: "Ten", 11: "Eleven", 12: "Twelve",
@@ -13,118 +13,149 @@ words_number = {
     1000000: "Million",
 }
 
+def one_num(num):
+    num = int(num)
+    # check if number is exact with the num in dictionary
+    if num in numbers.keys():
+        return numbers[num]
 
-def number_under_20(num):
-
-    #if number don't exceed 20
-    if num <= 20:
-        num_lst = [words_number[num] for x in words_number.keys() if x == num and x <= 20]
-        return num_lst[0]
+def two_nums(num):
     
-    
-def number_above_20(num):
-
     wrote = ""
-    
-    num1 = num - (num % 10)
-    num2 = num % 10
-    if num1 in words_number.keys() and num2 in words_number.keys():
-        wrote += words_number[num1] + "-" + words_number[num2]
-        return wrote
-    
+    # the exact num will display
+    num = int(num)
+    # if num < 9
+    if num <= 20 or num % 10 == 0:
+        return numbers[num]
+    # if we have more than 20
+    if num % 10 > 0:
+        wrote += numbers[(num//10)*10] + "-" + numbers[num%10]
+    return wrote
 
-
+        
+def three_nums(num):
     
-def three_digits(num):
-     
-    num1 = 0
+    
     wrote = ""
-    h = words_number[100]
-    
-
-    # read a first digit of 3-digit value
+    num = int(num)
     if num % 100 == 0:
-        wrote += words_number[num // 100] + " " + h
-    # read all value from dict if digit have less than 20
-    elif num % 100 <= 20:
-        num1 = num %100
-        wrote += words_number[num // 100] + " " + h + " " + number_under_20(num1)
-    else:
-        num1 = num %100
-        wrote += words_number[num // 100] + " " + h + " " + number_above_20(num1)
+        wrote += numbers[num//100] + " " + numbers[100]
+    elif num % 100 > 0:
+        wrote += numbers[num//100] + " " + numbers[100] + " "
+        num %= 100
+        wrote += two_nums(num)
     return wrote
 
-def four_digits(num):
-
-    num1 = num %1000
-    wrote = ""
-    t = words_number[1000]
-    # read one thousand
+def four_nums(num):
+    
+    num = int(num)
+    num1 = num
+    wrote = " "
     if num % 1000 == 0:
-        wrote += words_number[num // 1000] + " " + t
-    # read thousand with value less than 20
-    elif num % 1000 <= 20:
-        wrote += words_number[num // 1000] + " " + t + " " + number_under_20(num1)
-    elif num % 1000 > 20 and num % 1000 <= 99 :
-        wrote += words_number[num // 1000] + " " + t + " " + number_above_20(num1)
-    else:
-        #make double += (before and after thousand)
-        wrote += words_number[num // 1000]
-        num %= 1000
-        wrote += " " + t + " " + three_digits(num1)
+        wrote += numbers[num//1000] + " " + numbers[1000]
+    elif num % 1000 > 0:
+        wrote += numbers[num//1000] + " " + numbers[1000] + " "
+        num1 %= 1000
+        if len(str(num1)) == 1:
+            wrote += one_num(num1)
+        elif len(str(num1)) == 2:
+            wrote += two_nums(num1)
+        else:
+            wrote += three_nums(num)
     return wrote
 
-def five_digits(num):
-    num1 = num %1000
-    num2 = num %10000
-    t = words_number[1000]
-    
-    wrote = ""
+def five_nums(num):
 
-    # if value have exactly 10 000
-    if num2 == 0:
-        wrote += words_number[num // 1000] + " " + t
-    elif num2 <= 20:
-        if words_number[num // 1000] <= 20:
-            wrote += number_under_20(num1) + " "
-            num //= 10
-            wrote += four_digits(num1)
-        elif words_number[num // 1000] > 20 and words_number[num // 1000] <= 99:
-            wrote += number_above_20(num1) + " "
-            num //= 10
-            wrote += four_digits(num1)
-    elif num2 > 20 and num2 <= 99:
-        if words_number[num // 1000] <= 20:
-            wrote += number_under_20(num1) + " "
-            num //= 10
-            wrote += four_digits(num1)
-        elif words_number[num // 1000] > 20 and words_number[num // 1000] <= 99:
-            wrote += number_above_20(num1) + " "
-            num //= 10
-            wrote += four_digits(num1)
+    num = int(num)
+    wrote = " "
+    #save original value before divided
+    num1 = num
+    #if value equal to 0
+    if num % 10000 == 0:
+        wrote += numbers[num] + " " + numbers[1000] + " "
+    #if value more than 0
+    elif num %10000 > 0:
+        num //= 1000
+        wrote += two_nums(num) + " " + numbers[1000] + " "
+        num1 %= 1000
+        if len(str(num1)) == 1:
+            wrote += one_num(num1)
+        elif len(str(num1)) == 2:
+            wrote += two_nums(num1)
+        else:
+            wrote += three_nums(num1)
+    return wrote
+
+def six_nums(num):
+
+    num = int(num)
+    wrote = " "
+
+    #save original value before divided
+    num1 = num
+    #if value equal to 0
+    if num % 100000 == 0:
+        num //= 1000
+        wrote += three_nums(num) + " " + numbers[1000]
+    else:
+        num //= 1000
+        wrote += three_nums(num) + " " + numbers[1000] + " "
+        num1 %= 1000
+        if len(str(num1)) == 1:
+            wrote += one_num(num1)
+        elif len(str(num1)) == 2:
+            wrote += two_nums(num1)
+        else:
+            wrote += three_nums(num1)
+    return wrote
+
+def seven_nums(num):
+    
+    num = int(num)
+    num1 = num
+    wrote = " "
+
+    if num % 1000000 == 0:
+        num //= 1000000
+        wrote += one_num(num) + " Million"
+    else:
+        num //= 1000000
+        wrote += one_num(num) + " Million "
+        num1 %= 1000000
+        if len(str(num1)) == 1:
+            wrote += one_num(num1)
+        elif len(str(num1)) == 2:
+            wrote += two_nums(num1)
+        elif len(str(num1)) == 3:
+            wrote += three_nums(num1)
+        elif len(str(num1)) == 4:
+            print(len(str(num1)))
+            wrote += four_nums(num1)
+        elif len(str(num1)) == 5:
+            wrote += five_nums(num1)
+        else:    
+            wrote += six_nums(num1)
     return wrote
     
+    
 
     
     
 
-def show_number():
-
-    numbers = input("please enter the number from 1 to 1 000 000 000: ")
-    if numbers.isdigit():
-        numbers = int(numbers)
-        if numbers <= 20:
-            print(number_under_20(numbers))
-        elif numbers > 20 and len(str(numbers)) == 2:
-            print(number_above_20(numbers))
-        elif len(str(numbers)) == 3:
-            print(three_digits(numbers))
-        elif len(str(numbers)) == 4:
-            print(four_digits(numbers))
-        elif len(str(numbers)) == 5:
-            print(four_digits(numbers))
-    else:
-        print("Put a correct value!")
-    
-show_number()
+if __name__ == "__main__":
+    number = input("Please provide a value: ")
+    if len(number) == 1:
+        print(one_num(number))
+    if len(number) == 2:
+        print(two_nums(number))
+    elif len(number) == 3:
+        print(three_nums(number))
+    elif len(number) == 4:
+        print(four_nums(number))
+    elif len(number) == 5:
+        print(five_nums(number))
+    elif len(number) == 6:
+        print(six_nums(number))
+    elif len(number) == 7:
+        print(seven_nums(number))
 
