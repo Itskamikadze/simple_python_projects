@@ -16,11 +16,11 @@ class MortgageCalculator:
     
         
 
-    def fx_inst(self):
+    def fx_inst(self): 
+        #choose = input("What variant you choose?[M/W/D] ").upper()
         self.p = self.payment
-    #    choose = input("What variant you choose?[M/W/D] ").upper()
         #fix per month
-    #    if choose == "M":
+        #if choose == "M":
         self.r = self.rate / self.PERCENT / self.MONTH_IN_YEARS
         self.n = self.loan * self.MONTH_IN_YEARS
         #fix per week
@@ -41,13 +41,22 @@ class MortgageCalculator:
         self.p = self.payment
         #we need a vlue from previous def
         install = self.fx_inst()
-        while  self.p > 0: 
-            self.p = self.p + (self.p * (self.rate / self.PERCENT / self.MONTH_IN_YEARS))            
+        while  self.p > 0:
+            self.p = self.p + (self.p * (self.r))
             self.p -= install
             #print("%.2f" % self.p)
             balance.append(self.p)
         return balance
             
+    def amount_paid(self):
+        install = self.fx_inst()
+        self.p = self.payment
+        paids = []
+        while self.p > 0:
+            self.p -= install
+            install = install + self.fx_inst()
+            paids.append(install)
+        return paids
 
             
 
@@ -56,15 +65,17 @@ class MortgageCalculator:
 
 
     def __str__(self) -> str:
+        print("\n")
+        print(f"Fixed installment is: {self.fx_inst():.2f}")
         print("Remaining balance is: \n_______________\n")
-        balance = []
-        for month,rem in enumerate(self.remaining_balance(), 1):
-            print(month,"        ", f"{rem:.2f}")
+        print("Month".ljust(10), "Remaining Bal.".ljust(15), "Amount Paid".ljust(5))
+        for month, rem in enumerate(self.remaining_balance(), 1): #, self.amount_paid()   remember to zip values
+            amount = self.fx_inst() * month
+            print(str(month).ljust(10), f"{rem:.2f} PLN","    ", str("%.2f" % amount).ljust(5)) #,str(tow).ljust(4) 
         return "Done"
             
 
-    def decrease_inst(self):
-        pass
+    
 
 
     
