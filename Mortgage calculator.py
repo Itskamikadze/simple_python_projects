@@ -57,6 +57,8 @@ class MortgageCalculator:
             install = install + self.fx_inst()
             paids.append(install)
         return paids
+    
+    
 
             
 
@@ -66,13 +68,12 @@ class MortgageCalculator:
 
     def __str__(self) -> str:
         print("\n")
-        print(f"Fixed installment is: {self.fx_inst():.2f}")
         print("Remaining balance is: \n_______________\n")
         print("Month".ljust(10), "Remaining Bal.".ljust(15), "Amount Paid".ljust(5))
         for month, rem in enumerate(self.remaining_balance(), 1): #, self.amount_paid()   remember to zip values
             amount = self.fx_inst() * month
             print(str(month).ljust(10), f"{rem:.2f} PLN","    ", str("%.2f" % amount).ljust(5)) #,str(tow).ljust(4) 
-        return "Done"
+        return f"\nFixed installment is: {self.fx_inst():.2f}\nTotally amount paid is: {amount}\nInterest that must be paid is: {amount - self.payment}"
             
 
     
