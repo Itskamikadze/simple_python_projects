@@ -1,90 +1,144 @@
 import random
 
-class Board:
+def main():
 
-    test_board = ["#", "$", "#", "$", "#", "$", "#", "$", "#"]
-
-
-    def display(self, board):
-        print(board[6] + " | " + board[7] + " | " + board[8])
-        print("---------")
-        print(board[3] + " | " + board[4] + " | " + board[5])
-        print("---------")
-        print(board[0] + " | " + board[1] + " | " + board[2])
-
-    def place_mark(self, board, position, mark):
-        board[position-1] = mark
-        
-
-    def check_win(self, board, mark):
-        return ((board[6] == mark and board[7] == mark and board[8] == mark) or
-                (board[3] == mark and board[4] == mark and board[5] == mark) or
-                (board[0] == mark and board[1] == mark and board[2] == mark) or
-                (board[6] == mark and board[3] == mark and board[0] == mark) or
-                (board[7] == mark and board[4] == mark and board[1] == mark) or
-                (board[8] == mark and board[5] == mark and board[2] == mark) or
-                (board[6] == mark and board[4] == mark and board[2] == mark) or
-                (board[8] == mark and board[4] == mark and board[0] == mark))
-    
-    
-    def space_check(self, board, position):
-       return board[position] == " "
-    
-    
-    def full_board_check(self, board):
-        for place in range(1,10):
-            if self.space_check(board, place):
-                return False
-        return True
-    
-    def replay(self):
-        return input("Do you want to play again?[Y/N]: ").upper()
-
-
-class Player():
-
-    def __init__(self) -> None:
-        self.current_player_X = ("X", "O")
-        self.current_player_O = ("O", "X")
-
-    def choose_player(self):
-        choose = ""
-        while choose != 'X' or choose != "O":
-
-            choose = input("Please choose a player you want to play[X/O]: ").upper()
-            if choose == 'X':
-                return self.current_player_X
-            elif choose == "O":
-                return self.current_player_O
-            else:
-                print("Wrong value!")
-
-    def whos_first(self):
-        return random.choice("XO")
-    
-    def put_place(self):
-        pass
-
-    
-        
-            
-        
-
-    
-if __name__ == "__main__":
+    #invoke the classes
+    theBoard = Board()
+    player = Player()
 
     while True:
-        theBoard = [' ']*9
-    #invoke the both classes4
-        board = Board()
-        player = Player()
-    
-    
+        # assing the players and check whos goes first!
         print("Welcome in a Tic Tac Toe game!")
-        #invoke the board
-        print(board.display(theBoard))
-        print(board.place_mark(board.test_board, 4, mark="Y"))
-        print(board.display(board.test_board))
-        print(board.check_win(board.test_board, "#"))
-        #print(player.choose_player())
+        player_X, player_O = player.choose_player()
+        turn = player.whos_first()
+        print(f'Player {turn} will start first!')
+
+        #get a message if you want to play!
+        play = input("Do you want to play?[Y/N]").upper()
+        if play == "Y":
+            game_on = True
+        else:
+            game_on = False
+
+        while game_on:
+            if turn == "Player X":
+                
+                # Player X turn
+                print(theBoard.display_board(theBoard.board))
+                position = theBoard.player_choice(theBoard.board)
+                theBoard.put_marker(theBoard.board, position, player_X)
+
+                if theBoard.check_win(theBoard.board, player_X):
+                    print(theBoard.display_board(theBoard.board))
+                    print("Congratulations! Player X win this game!")
+                    game_on = False
+                else:
+                    if theBoard.is_board_full(theBoard.board):
+                        print(theBoard.display_board(theBoard.board))
+                        print("Its a tie!")
+                        break
+                    else:
+                        turn = "Player O"
+            else:
+                
+                # Player O turn
+                print(theBoard.display_board(theBoard.board))
+                position = theBoard.player_choice(theBoard.board)
+                theBoard.put_marker(theBoard.board, position, player_O)
+
+                if theBoard.check_win(theBoard.board, player_O):
+                    print(theBoard.display_board(theBoard.board))
+                    print("Congratulations! Player O win this game!")
+                    game_on = False
+                else:
+                    if theBoard.is_board_full(theBoard.board):
+                        print(theBoard.display_board(theBoard.board))
+                        print("Its a tie!")
+                        break
+                    else:
+                        turn = "Player X"
+
+
+
+
+
+class Board():
+
+    def __init__(self):
+        self.board = [' '] * 9
+        self.test_board = ['#', '$', '#', '$', '#', '$', '#', '$', '#']
+
+    def display_board(self, board):
+        # create a fields  and board
+        return f'''
+        {board[6]}|{board[7]}|{board[8]}  7  8  9
+        -----
+        {board[3]}|{board[4]}|{board[5]}  4  5  6
+        -----
+        {board[0]}|{board[1]}|{board[2]}  1  2  3
+        
+        '''
     
+    def space_check(self, board, position):
+         # check if some fields are free
+         return board[position] == " "
+    
+    def is_board_full(self, board):
+        for space in range(1,10):
+            if self.space_check(board, space):
+                return False # if a single space is blank, return False
+        return True #if no spaces are blank, return True
+    
+    def put_marker(self, board, position, marker):
+        board[position-1] = marker
+
+    def check_win(self, board, marker):
+        return ((board[6] == board[7] == board[8] == marker) or #in the top
+                (board[3] == board[4] == board[5] == marker) or #in the middle
+                (board[0] == board[1] == board[2] == marker) or # in the bottom
+                (board[6] == board[3] == board[0] == marker) or # in left to down
+                (board[7] == board[4] == board[1] == marker) or # in middle to down
+                (board[8] == board[5] == board[2] == marker) or # in right to down
+                (board[6] == board[4] == board[2] == marker) or # diagonal
+                (board[8] == board[4] == board[0] == marker))   # diagonal
+    
+    def player_choice(self, board):
+
+        posiiton = 0
+        # choose a position from 1 - 9 and it should has free field
+        while posiiton not in [1,2,3,4,5,6,7,8,9] or not self.space_check(board, posiiton):
+            posiiton = int(input("Please choose a field (1 - 9): "))
+        return posiiton
+    
+class Player:
+
+    def __init__(self):
+        self.player_1 = 'X'
+        self.player_2 = 'O'
+
+    def choose_player(self):
+        
+        choose = ""
+
+        #choose a player X or O
+        while not ( choose == "X" or choose == "O"):
+            choose = input("Please choose a player:[X/O] ").upper()
+
+        if choose == self.player_1:
+            return ("X", "O") #if choose X, the next should be O
+        elif choose == self.player_2:
+            return ("O", "X") #if choose O, the next should be X
+        
+    def whos_first(self):
+        
+        if random.randint(0,1) == 0:
+            return "Player X"
+        else:
+            return "Player O"
+
+
+
+        
+
+if __name__ == "__main__":
+    main()
