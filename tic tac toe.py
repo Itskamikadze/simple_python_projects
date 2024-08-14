@@ -7,11 +7,13 @@ def main():
     player = Player()
 
     while True:
-        # assing the players and check whos goes first!
+        # assign the players and check whos goes first!
         print("Welcome in a Tic Tac Toe game!")
         player_X, player_O = player.choose_player()
         turn = player.whos_first()
         print(f'Player {turn} will start first!')
+        #create new board
+        newBoard = [' ']*9
 
         #get a message if you want to play!
         play = input("Do you want to play?[Y/N]").upper()
@@ -24,17 +26,18 @@ def main():
             if turn == "Player X":
                 
                 # Player X turn
-                print(theBoard.display_board(theBoard.board))
-                position = theBoard.player_choice(theBoard.board)
-                theBoard.put_marker(theBoard.board, position, player_X)
+                print(theBoard.display_board(newBoard))
+                position = theBoard.player_choice(newBoard)
+                theBoard.put_marker(newBoard, position, player_X)
 
-                if theBoard.check_win(theBoard.board, player_X):
-                    print(theBoard.display_board(theBoard.board))
+                if theBoard.check_win(newBoard, player_X):
+                    print(theBoard.display_board(newBoard))
                     print("Congratulations! Player X win this game!")
                     game_on = False
+                    break
                 else:
-                    if theBoard.is_board_full(theBoard.board):
-                        print(theBoard.display_board(theBoard.board))
+                    if theBoard.is_board_full(newBoard):
+                        print(theBoard.display_board(newBoard))
                         print("Its a tie!")
                         break
                     else:
@@ -42,21 +45,25 @@ def main():
             else:
                 
                 # Player O turn
-                print(theBoard.display_board(theBoard.board))
-                position = theBoard.player_choice(theBoard.board)
-                theBoard.put_marker(theBoard.board, position, player_O)
+                print(theBoard.display_board(newBoard))
+                position = theBoard.player_choice(newBoard)
+                theBoard.put_marker(newBoard, position, player_O)
 
-                if theBoard.check_win(theBoard.board, player_O):
-                    print(theBoard.display_board(theBoard.board))
+                if theBoard.check_win(newBoard, player_O):
+                    print(theBoard.display_board(newBoard))
                     print("Congratulations! Player O win this game!")
                     game_on = False
+                    break
                 else:
-                    if theBoard.is_board_full(theBoard.board):
-                        print(theBoard.display_board(theBoard.board))
+                    if theBoard.is_board_full(newBoard):
+                        print(theBoard.display_board(newBoard))
                         print("Its a tie!")
                         break
                     else:
                         turn = "Player X"
+
+        
+        
 
 
 
@@ -81,7 +88,7 @@ class Board():
     
     def space_check(self, board, position):
          # check if some fields are free
-         return board[position] == " "
+         return board[position-1] == " "
     
     def is_board_full(self, board):
         for space in range(1,10):
@@ -109,6 +116,11 @@ class Board():
         while posiiton not in [1,2,3,4,5,6,7,8,9] or not self.space_check(board, posiiton):
             posiiton = int(input("Please choose a field (1 - 9): "))
         return posiiton
+    
+    def replay(self):
+
+        rep = input(" Do you want to play again?[Y/N] ")
+        return rep
     
 class Player:
 
