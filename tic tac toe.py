@@ -61,6 +61,10 @@ def main():
                         break
                     else:
                         turn = "Player X"
+        
+        if not theBoard.replay():
+            print("Have a nice day!")
+            break
 
         
         
@@ -119,8 +123,9 @@ class Board():
     
     def replay(self):
 
-        rep = input(" Do you want to play again?[Y/N] ")
+        rep = input(" Do you want to play again?[Y/N] ").upper().startswith('Y')
         return rep
+        
     
 class Player:
 
