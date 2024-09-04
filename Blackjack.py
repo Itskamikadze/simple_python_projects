@@ -35,9 +35,20 @@ def main():
         player_two = Player("Player 2")
         player_three = Player("Player 3")
         dealer = Player("Dealer")
+        my_chips = Chips("Player 1")
+        player_2_chips = Chips("Player 2")
+        player_3_chips = Chips("Player 3")
+
+        #creating lists with players
+        players = [player_one, player_two, player_three]
+        players_chips = [my_chips, player_2_chips, player_3_chips]
 
         #Create empty lists for players and Dealer
         print("Welcome in the BlackJack Game!\n")
+
+        get_bet(my_chips)
+        get_bet_AI(player_2_chips)
+        get_bet_AI(player_3_chips)
 
 
         #Shuffle the deck
@@ -90,35 +101,39 @@ def main():
             #Player Three turn
             player_three.hit_or_stand_AI(dealer.dealer_one_value[1], player_three.value, mydeck, player_three)
 
-            players = [player_one, player_two, player_three]
+        
 
             for player in players:
                 if player.value > 21:
+                    print(f"{player.name} BUSTS and loses !")
                     players.remove(player)
-                    for x in players:
-                        print(x)
-                    print(f"{player.name} BUSTS!")
+                    break
                     
-                
-                if player.value <= 21:
-                    while dealer.value < 17:
-                        dealer.hit(mydeck)
-                        print("Dealer has: ", *dealer.cards, sep="\n")
-                        print("Dealer value is: ", dealer.value)
                     
-                    if dealer.value > 21:
-                        print(f"{dealer.name} BUST!")
-                        break
+        for player in players:
+                    
+            if player.value <= 21:
+                while dealer.value < 17:
+                    print("Dealer has: ", *dealer.cards, sep="\n")
+                    print("Dealer value is: ", dealer.value)
+                    dealer.hit(mydeck)
+                    
+                if dealer.value > 21:
+                    print("Dealer has: ", *dealer.cards, sep="\n")
+                    print("Dealer value is: ", dealer.value)
+                    print(f"{dealer.name} BUST!")
+                    print(f"{player.name} win")
+                    break
 
-                    elif dealer.value > player.value:
-                        print("Dealer has: ", *dealer.cards, sep="\n")
-                        print("Dealer value is: ", dealer.value)
-                        print("Dealer wins!")
-                        
-                    elif player.value > dealer.value:
-                        print(f"{player.name} wins!")
-                        print(f"{player.name} has: ", *player.cards, sep="\n")
-                        print(f"{player.name} value is: ", player.value)
+                elif dealer.value > player.value:
+                    print("Dealer has: ", *dealer.cards, sep="\n")
+                    print("Dealer value is: ", dealer.value)
+                    print(f"Dealer wins over {player.name}!")
+                    
+                elif player.value > dealer.value:
+                    print(f"{player.name} wins!")
+                    print(f"{player.name} has: ", *player.cards, sep="\n")
+                    print(f"{player.name} value is: ", player.value)
 
  
 
@@ -199,10 +214,14 @@ class Player():
                 self.hit(deck)
                 print("You have:\n", *player.cards, sep="\n")
                 print("Your value is: ", player.value)
-                continue
+                
             elif player_x == 's':
                 print(f'{self.name} Stands! Now it\'s opponent turn!')
                 playing = False
+                break
+            elif player.value > 21:
+                playing = False
+                break
             else:
                 print("Sorry, please try again!")
                 continue
@@ -211,7 +230,7 @@ class Player():
     def hit_or_stand_AI(self, dealer_value, player_value, deck, player):
         
         global playing
-        while player_value >= 17 and player_value <= 21:
+        while player_value <= 21:
             if player_value <= 16 and (dealer_value >= 7 or dealer_value <= 11):
                 self.hit(deck)
                 print(f"{self.name} have:\n", *player.cards, sep="\n")
@@ -241,16 +260,17 @@ class Chips():
     def lose_bet(self):
         self.total -= self.default
 
-def get_bet(chips, player):
+def get_bet(chips):
 
         while True:
-            try:
+            try: 
                 chips.bet_chips = int(input("What bet do you want to place?: "))
                 if chips.bet_chips % 5 != 0:
                     print("Bet should divide by 5!")
                 else:
                     chips.total -= chips.bet_chips
-                    return f"{player.name} bet {chips.bet_chips}!"
+                    chips.default += chips.bet_chips
+                    print(f"{chips.name} bet {chips.default}!")
             except ValueError:
                 print("Please put a correct value!")
             else:
@@ -259,10 +279,11 @@ def get_bet(chips, player):
                 else:
                     break
 
-def get_bet_AI(chips, player):
-    bet = random.randrange(5, 5, chips.total)
+def get_bet_AI(chips):
+    bet = random.randrange(5, chips.total, 5)
     chips.total -= bet
-    return f"{player.name} bet {bet}!"
+    chips.default += bet
+    print(f"{chips.name} bet {chips.default}!")
     
 
 
