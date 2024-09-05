@@ -24,10 +24,13 @@ ranks = {"Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
 values = {"Two": 2, "Three": 3, "Four": 4, "Five": 5, "Six": 6, "Seven": 7, "Eight": 8, "Nine": 9, "Ten": 10,
           "Jack": 10, "Queen": 10, "King": 10, "Ace": 11}
 playing = True
+playing_one = True
 
 
 def main():
-    # while True:
+    while True:
+        global playing_one
+        global playing
         # invoke the classes
         allcards = Card(ranks,suits)
         mydeck = Deck()
@@ -90,18 +93,25 @@ def main():
         print("Second Dealers card is:", dealer.cards[1])
         print("Dealer value is:",dealer.dealer_one_value[1])
 
-        while playing:
+        #thinking about create loop with 'stand' option - if players stand then the loop break 
+        while playing_one:
 
             #Player one hit or stand - the value is show
             player_one.hit_or_stand(mydeck, player_one)
 
+            if player_one.value > 21:
+                print(f"{player_one.name} BUST! You loose {my_chips.default}")
+                my_chips.lose_bet()
+                print(f"Your total depo is: {my_chips.total}")
+                break
+        
+        while playing:
             #Player Two turn 
             player_two.hit_or_stand_AI(dealer.dealer_one_value[1], player_two.value, mydeck, player_two)
 
             #Player Three turn
             player_three.hit_or_stand_AI(dealer.dealer_one_value[1], player_three.value, mydeck, player_three)
 
-        
 
             for player in players:
                 if player.value > 21:
@@ -117,23 +127,67 @@ def main():
                     print("Dealer has: ", *dealer.cards, sep="\n")
                     print("Dealer value is: ", dealer.value)
                     dealer.hit(mydeck)
-                    
+
+                #if dealer looses    
                 if dealer.value > 21:
                     print("Dealer has: ", *dealer.cards, sep="\n")
                     print("Dealer value is: ", dealer.value)
                     print(f"{dealer.name} BUST!")
-                    print(f"{player.name} win")
-                    break
+                    # win for every player who have less than 21
+                    for player in players:
+                        # PLAYER ONE
+                        if player == player_one:
+                            print(f"{player_one.name} wins this part and earn {my_chips.default*1.5}")
+                            my_chips.win_bet()
+                            print(f"Your total depo is: {my_chips.total}")
+                        # PLAYER TWO
+                        if player == player_two:
+                            print(f"{player_two.name} wins this part and earn {player_2_chips.default*1.5}")
+                            player_2_chips.win_bet()
+                            print(f"Your total depo is: {player_2_chips.total}")
+                        # PLAYER THREE
+                        if player == player_three:
+                            print(f"{player_three.name} wins this part and earn {player_3_chips.default*1.5}")
+                            player_3_chips.win_bet()
+                            print(f"Your total depo is: {player_3_chips.total}")
 
                 elif dealer.value > player.value:
                     print("Dealer has: ", *dealer.cards, sep="\n")
                     print("Dealer value is: ", dealer.value)
                     print(f"Dealer wins over {player.name}!")
-                    
+                    for chips in players_chips:
+                        if chips.name == player.name:
+                            print(f"{player.name} lose his bet which is: {chips.default}")
+                            chips.lose_bet()
+
                 elif player.value > dealer.value:
-                    print(f"{player.name} wins!")
                     print(f"{player.name} has: ", *player.cards, sep="\n")
                     print(f"{player.name} value is: ", player.value)
+                    print(f"{player.name} wins!")
+                    for chips in players_chips:
+                        if chips.name == player.name:
+                            print(f"{player.name} win his bet which is: {chips.default*1.5}")
+                            chips.win_bet()
+                else:
+                    for chips in players_chips:
+                        if chips.name == player.name:
+                            print(f"{player.name} has a draw with dealer!")
+                            chips.draw_bet()
+
+                
+        play_again = input("Do you want to play again? hit 'y' or 'n' ").lower()
+        if play_again.startswith('y'):
+            print(f"""Total depo of players is:
+                 {my_chips.name} is: {my_chips.total}
+                 {player_2_chips.name} is: {player_2_chips.total}
+                 {player_3_chips.name} is: {player_3_chips.total}
+                  """)
+            playing = True
+            playing_one = True
+            continue
+        else:
+            print("Thanks for playing!")
+            break
 
  
 
@@ -206,7 +260,7 @@ class Player():
         
 
     def hit_or_stand(self, deck, player):
-        global playing
+        global playing_one
         while True:
             player_x = input("Would you like to hit or stay? (h/s): ").lower()
 
@@ -217,10 +271,10 @@ class Player():
                 
             elif player_x == 's':
                 print(f'{self.name} Stands! Now it\'s opponent turn!')
-                playing = False
+                playing_one = False
                 break
             elif player.value > 21:
-                playing = False
+                #playing = False
                 break
             else:
                 print("Sorry, please try again!")
@@ -242,6 +296,7 @@ class Player():
             else:
                 print(f"{self.name} stands! Now is the opponent turn!")
                 playing = False
+                break
                 
             break
                 
@@ -258,7 +313,10 @@ class Chips():
         self.total += (self.default*1.5)
 
     def lose_bet(self):
-        self.total -= self.default
+        self.default * 0
+
+    def draw_bet(self):
+        self.total += (self.default)
 
 def get_bet(chips):
 
